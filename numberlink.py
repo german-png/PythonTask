@@ -42,3 +42,82 @@ def parsing_coordinates(file):
             return None, None
         
     return field_size, board
+
+def get_neighbours(x, y, size):
+    if y % 2 == 0:
+        candidates = [(x+1, y), (x-1, y), (x, y+1), (x, y-1), (x-1, y-1), (x-1, y+1)]
+    else:
+        candidates = [(x+1, y), (x-1, y), (x, y+1), (x, y-1), (x+1, y-1), (x+1, y+1)]
+    
+    neighbours = []
+    for xn, yn in candidates:
+        if 0 <= xn <= size["max_x"] and 0 <= yn <= size["max_y"]:
+            neighbours.append((xn, yn))
+
+    return neighbours
+
+class HexNumberlink:
+    def __init__(self, size, board):
+        self.size = size
+        self.board = board 
+
+        self.pairs = {}
+        for coord, num in board.items():
+            self.pairs.setdefault(num, []).append(coord)
+        
+        self.numbers = sorted(list(self.pairs.keys()))
+        self.visited = set()
+        self.sollutions = []
+        self.count_sollutions = 1
+
+    def solve(self, max_solutions = 1):
+        self.max_solutions = max_solutions
+        self.sollutions = []
+        self.visited = set()
+        self.path_history = []
+
+        first_number = self.numbers[0]
+        start = self.pairs[first_number][0]
+
+        self.visited.add(start)
+        self.path_history.append(start)
+
+        self._backtrack(start, first_number, 0)
+        return self.sollutions
+
+    def _backtrack(self, cur_pos, cur_num, num_index):
+        if len(self.sollutions) >= self.max_solutions:
+            return
+        
+        cur_target = self.pairs[cur_num][1]
+
+        if cur_pos == cur_target:
+            if num_index == len(self.numbers) - 1:
+                self.sollutions.append(list(self.path_history))                     
+                return
+            else:
+                next_num = self.numbers[num_index + 1]
+                next_start = self.pairs[next_num][0]
+
+                if next_start in self.visited:
+                    return
+                
+                self.visited.add(next_start)
+                self.path_history.append(next_start)  
+                self._backtrack(next_start, next_num, num_index + 1)
+                self.path_history.pop()   
+                self.visited.remove(next_start)
+                return
+            
+        for neighbour in get_neighbours(cur_pos[0], cur_pos[1], self.size):
+            if neighbour in self.visited:
+                continue
+
+            if neighbour in self.board and neighbour != cur_target:
+                continue
+            
+            self.visited.add(neighbour)
+            self.path_history.append(neighbour)  
+            self._backtrack(neighbour, cur_num, num_index)
+            self.path_history.pop()  
+            self.visited.remove(neighbour)
