@@ -1,4 +1,5 @@
 from collections import Counter
+import os
 import pygame
 import math
 import sys
@@ -250,7 +251,9 @@ def run_gui(size, board_setup, found_solutions, numbers, pairs):
 
 
 if __name__ == "__main__":
-    file_path = 'PythonTask/input.txt' 
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    
+    file_path = os.path.join(script_dir, 'input.txt') 
     
     size, my_board = parsing_coordinates(file_path)
     
