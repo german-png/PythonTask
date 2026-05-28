@@ -13,3 +13,8 @@ temp_*.txt
 # Игнорируем системные файлы операционных систем
 .DS_Store
 Thumbs.db
+
+# Coverage reports
+.coverage
+.coverage.*
+htmlcov/
