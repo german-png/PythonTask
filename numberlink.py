@@ -70,9 +70,7 @@ class HexNumberlink:
             self.pairs.setdefault(num, []).append(coord)
         
         self.numbers = sorted(list(self.pairs.keys()))
-        self.visited = set()
-        self.sollutions = []
-        self.count_sollutions = 1
+
 
     def solve(self, max_solutions = 1):
         self.max_solutions = max_solutions
